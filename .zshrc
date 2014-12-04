@@ -2,10 +2,13 @@
 ########################################
 # 環境変数
 ########################################
+## 重複パスを登録しない
+typeset -U path cdpath fpath manpath
+
 export LANG=ja_JP.UTF-8
 export MAGICK_HOME=/usr/local/
-export PATH=~/.rbenv/shims:$PATH
-#eval "$(rbenv init -)"
+#export PATH=~/.rbenv/shims:$PATH 
+#eval "$(rbenv init -zsh)"
 
 ########################################
 # alias
@@ -14,6 +17,7 @@ alias ls='ls -GF'
 alias la='ls -a'
 alias ll='ls -l'
 alias zukan='ssh -t -f -N -L 13306:rds-zukan1.cx3oma2dboig.ap-northeast-1.rds.amazonaws.com:3306 zukan'
+alias tokoroten='ssh -i aws_tokoroten.pem ec2-user@54.149.70.247'
 
 ########################################
 # プロンプト
