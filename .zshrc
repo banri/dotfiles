@@ -1,14 +1,16 @@
-
+# 少し凝った zshrc
+# License : MIT
+# http://mollifier.mit-license.org/
+ 
 ########################################
 # 環境変数
-########################################
-## 重複パスを登録しない
-typeset -U path cdpath fpath manpath
-
 export LANG=ja_JP.UTF-8
 export MAGICK_HOME=/usr/local/
 #export PATH=~/.rbenv/shims:$PATH 
 #eval "$(rbenv init -zsh)"
+export PATH=$HOME/.rbenv/bin:$PATH
+eval "$(rbenv init - zsh)"
+export CC=/usr/bin/gcc
 
 ########################################
 # alias
@@ -21,112 +23,167 @@ alias tokoroten='ssh -i ec2tokoroten.pem ec2-user@54.148.56.227'
 
 ########################################
 # プロンプト
-########################################
-autoload colors
-colors
+######################################## 
+# 色を使用出来るようにする
+autoload -Uz colors
 
-case ${UID} in
-0)
-    PROMPT="%B%{${fg[red]}%}%/#%{${reset_color}%}%b "
-    PROMPT2="%B%{${fg[red]}%}%_#%{${reset_color}%}%b "
-    SPROMPT="%B%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%}%b "
-    [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] && 
-        PROMPT="%{${fg[cyan]}%}$(echo ${HOST%%.*} | tr '[a-z]' '[A-Z]') ${PROMPT}"
-    ;;
-*)
-    PROMPT="%{${fg[red]}%}%/%%%{${reset_color}%} "
-    PROMPT2="%{${fg[red]}%}%_%%%{${reset_color}%} "
-    SPROMPT="%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%} "
-    [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] && 
-        PROMPT="%{${fg[cyan]}%}$(echo ${HOST%%.*} | tr '[a-z]' '[A-Z]') ${PROMPT}"
-    ;;
-esac
-
-# set terminal title including current directory
-#
-case "${TERM}" in
-kterm*|xterm*)
-    precmd() {
-        echo -ne "\033]0;${USER}@${HOST%%.*}:${PWD}\007"
-    }
-    export LSCOLORS=exfxcxdxbxegedabagacad
-#    export LSCOLORS=gxfxcxdxbxegedabagacad
-    export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
-    zstyle ':completion:*' list-colors \
-        'di=34' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
-    ;;
-esac
-
-# コマンドを実行するときに右プロンプトを消す
-setopt transient_rprompt
-
-
-########################################
+# emacs 風キーバインドにする
+bindkey -e
+ 
 # ヒストリの設定
-########################################
 HISTFILE=~/.zsh_history
 HISTSIZE=1000000
 SAVEHIST=1000000
-setopt hist_ignore_dups     # ignore duplication command history list
-setopt share_history        # share command history data
+ 
+# プロンプト
+# 1行表示
+# PROMPT="%~ %# "
+# 2行表示
+PROMPT="%{${fg[red]}%}[%n@%m]%{${reset_color}%} %~
+%# "
+ 
+ 
+# 単語の区切り文字を指定する
+autoload -Uz select-word-style
+select-word-style default
+# ここで指定した文字は単語区切りとみなされる
+# / も区切りと扱うので、^W でディレクトリ１つ分を削除できる
+zstyle ':zle:*' word-chars " /=;@:{},|"
+zstyle ':zle:*' word-style unspecified
 
+export LSCOLORS=gxfxcxdxbxegedabagacad
+export LS_COLORS='di=36:ln=01;35:so=01;32:ex=01;31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw'
+
+alias ls="ls -GF"
+
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+ 
 ########################################
 # 補完
-########################################
+# 補完機能を有効にする
+#for zsh-completions
+fpath=(/usr/local/share/zsh-completions $fpath)
 autoload -Uz compinit
-compinit
+compinit -u
+ 
+# 補完で小文字でも大文字にマッチさせる
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+ 
+# ../ の後は今いるディレクトリを補完しない
+zstyle ':completion:*' ignore-parents parent pwd ..
+ 
+# sudo の後ろでコマンド名を補完する
+zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
+                   /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
+ 
+# ps コマンドのプロセス名補完
+zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
+ 
+ 
+########################################
+# vcs_info
+ 
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' formats '(%s)-[%b]'
+zstyle ':vcs_info:*' actionformats '(%s)-[%b|%a]'
+precmd () {
+    psvar=()
+    LANG=en_US.UTF-8 vcs_info
+    [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
+}
+RPROMPT="%1(v|%F{green}%1v%f|)"
+ 
+ 
+########################################
+# オプション
+# 日本語ファイル名を表示可能にする
+setopt print_eight_bit
+ 
+# beep を無効にする
+setopt no_beep
+ 
+# フローコントロールを無効にする
+setopt no_flow_control
+ 
+# '#' 以降をコメントとして扱う
+setopt interactive_comments
+ 
+# ディレクトリ名だけでcdする
+setopt auto_cd
+ 
+# cd したら自動的にpushdする
+setopt auto_pushd
+# 重複したディレクトリを追加しない
+setopt pushd_ignore_dups
+ 
+# = の後はパス名として補完する
+setopt magic_equal_subst
+ 
+# 同時に起動したzshの間でヒストリを共有する
+setopt share_history
+ 
+# 同じコマンドをヒストリに残さない
+setopt hist_ignore_all_dups
+ 
+# ヒストリファイルに保存するとき、すでに重複したコマンドがあったら古い方を削除する
+setopt hist_save_nodups
+ 
+# スペースから始まるコマンド行はヒストリに残さない
+setopt hist_ignore_space
+ 
+# ヒストリに保存するときに余分なスペースを削除する
+setopt hist_reduce_blanks
+ 
+# 補完候補が複数あるときに自動的に一覧表示する
+setopt auto_menu
+ 
+# 高機能なワイルドカード展開を使用する
+setopt extended_glob
+ 
+########################################
+# キーバインド
+ 
+# ^R で履歴検索をするときに * でワイルドカードを使用出来るようにする
+bindkey '^R' history-incremental-pattern-search-backward
+ 
+########################################
+# エイリアス
+ 
+alias la='ls -a'
+alias ll='ls -l'
+ 
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+ 
+alias mkdir='mkdir -p'
+ 
+# sudo の後のコマンドでエイリアスを有効にする
+alias sudo='sudo '
+ 
+# グローバルエイリアス
+alias -g L='| less'
+alias -g G='| grep'
+ 
+# C で標準出力をクリップボードにコピーする
+# mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
+if which pbcopy >/dev/null 2>&1 ; then
+    # Mac
+    alias -g C='| pbcopy'
+elif which xsel >/dev/null 2>&1 ; then
+    # Linux
+    alias -g C='| xsel --input --clipboard'
+elif which putclip >/dev/null 2>&1 ; then
+    # Cygwin
+    alias -g C='| putclip'
+fi
+ 
+ 
+########################################
+# OS 別の設定
 
-setopt complete_aliases # aliased ls needs if file/dir completions work
 
-#from http://qiita.com/items/ed2d36698a5cc314557d
-zstyle ':completion:*:default' menu select=2
-zstyle ':completion:*' verbose yes
-zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
-zstyle ':completion:*:messages' format '%F{YELLOW}%d'$DEFAULT
-zstyle ':completion:*:warnings' format '%F{RED}No matches for:''%F{YELLOW} %d'$DEFAULT
-zstyle ':completion:*:descriptions' format '%F{YELLOW}completing %B%d%b'$DEFAULT
-zstyle ':completion:*:options' description 'yes'
-zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'$DEFAULT
-
-# LS_COLORSを設定しておく
-#export LS_COLORS='di=01;33:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=01;43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
-export LSCOLORS=exfxcxdxbxegedabagacad
-export LS_COLORS='di=30:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
-
-# lsコマンド時、自動で色がつく
-#export CLICOLOR=true
-
-# ファイル補完候補に色を付ける
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-
-# マッチ種別を別々に表示
-zstyle ':completion:*' group-name ''
-
-# セパレータを設定する
-zstyle ':completion:*' list-separator '-->'
-zstyle ':completion:*:manuals' separate-sections true
-
-# 補完に関するオプション
-# http://voidy21.hatenablog.jp/entry/20090902/1251918174
-setopt auto_param_slash      # ディレクトリ名の補完で末尾の / を自動的に付加し、次の補完に備える
-setopt mark_dirs             # ファイル名の展開でディレクトリにマッチした場合 末尾に / を付加
-setopt list_types            # 補完候補一覧でファイルの種別を識別マーク表示 (訳注:ls -F の記号)
-setopt auto_menu             # 補完キー連打で順に補完候補を自動で補完
-setopt auto_param_keys       # カッコの対応などを自動的に補完
-setopt interactive_comments  # コマンドラインでも # 以降をコメントと見なす
-setopt magic_equal_subst     # コマンドラインの引数で --prefix=/usr などの = 以降でも補完できる
-
-setopt complete_in_word      # 語の途中でもカーソル位置で補完
-setopt always_last_prompt    # カーソル位置は保持したままファイル名一覧を順次その場で表示
-
-setopt print_eight_bit  #日本語ファイル名等8ビットを通す
-setopt extended_glob  # 拡張グロブで補完(~とか^とか。例えばless *.txt~memo.txt ならmemo.txt 以外の *.txt にマッチ)
-setopt globdots # 明確なドットの指定なしで.から始まるファイルをマッチ
-
-#cdは親ディレクトリからカレントディレクトリを選択しないので表示させないようにする (例: cd ../<TAB>):
-zstyle ':completion:*:cd:*' ignore-parents parent pwd
-
-# オブジェクトファイルとか中間ファイルとかはfileとして補完させない
-zstyle ':completion:*:*files' ignored-patterns '*?.o' '*?~' '*\#'
-
-[ -f ~/.zshrc.mine ] && source ~/.zshrc.mine
+########################################
+# その他
+# cdしたあとで、自動的に ls する
+function chpwd() { ls -a }
