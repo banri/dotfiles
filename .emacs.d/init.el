@@ -69,7 +69,6 @@
 ;; C-tでウィンドウを切り替える。初期値はtranspose-chars
 (global-set-key (kbd "C-t") 'other-window)
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; フレーム、ウィンドウまわりのいろいろ
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -211,4 +210,7 @@
   ;; (global-set-key (kbd "C-.") 'redo)
   )
 
-
+;;Anything
+(require 'anything)
+(require 'anything-config)
+(add-to-list 'anything-sources 'anything-c-source-emacs-commands)
