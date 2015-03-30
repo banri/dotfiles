@@ -17,7 +17,7 @@ alias ls='ls -GF'
 alias la='ls -a'
 alias ll='ls -l'
 alias zukan='ssh -t -f -N -L 13306:rds-zukan1.cx3oma2dboig.ap-northeast-1.rds.amazonaws.com:3306 zukan'
-alias tokoroten='ssh -i aws_tokoroten.pem ec2-user@54.149.70.247'
+alias tokoroten='ssh -i ec2tokoroten.pem ec2-user@54.148.56.227'
 
 ########################################
 # プロンプト
