@@ -26,7 +26,7 @@ alias tokoroten='ssh -i ec2tokoroten.pem ec2-user@54.148.56.227'
 ######################################## 
 # 色を使用出来るようにする
 autoload -Uz colors
-
+colors
 # emacs 風キーバインドにする
 bindkey -e
  
