@@ -178,10 +178,6 @@ elif which putclip >/dev/null 2>&1 ; then
     # Cygwin
     alias -g C='| putclip'
 fi
- 
- 
-########################################
-# OS 別の設定
 
 
 ########################################
@@ -190,4 +186,4 @@ fi
 function chpwd() { ls -a }
 
 #giboの設定
-source .gibo-completion.zsh
+source ~/.gibo-completion.zsh
