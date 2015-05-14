@@ -43,8 +43,8 @@
 (require 'cl)
 
 ;; 文字コードの設定
-(set-language-environment "Japanese")
-(prefer-coding-system 'utf-8)
+(set-language-environment 'Japanese)
+(set-default-coding-systems 'utf-8)
 
 ;; Mac OS Xの場合のファイル名の設定
 (when (eq system-type 'darwin)
@@ -68,6 +68,11 @@
 
 ;; C-tでウィンドウを切り替える。初期値はtranspose-chars
 (global-set-key (kbd "C-t") 'other-window)
+
+(global-set-key (kbd "C-c C-e")
+  (lambda () (interactive) (switch-to-buffer (find-file-noselect "~/.emacs.d/init.el"))))
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; フレーム、ウィンドウまわりのいろいろ
@@ -214,3 +219,4 @@
 (require 'anything)
 (require 'anything-config)
 (add-to-list 'anything-sources 'anything-c-source-emacs-commands)
+(global-set-key (kbd "C-;") 'anything)
