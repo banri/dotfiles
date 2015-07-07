@@ -1,0 +1,130 @@
+# encoding: utf-8
+# language: ja
+
+機能: トップページのリンクが正しく動作する
+     Given トップページにアクセスする
+#   Given 非ログイン時
+#   Given 日本語
+
+# ヘッダ確認シナリオ
+  Scenario:
+    When "1" 番目の "/images/atnd_logo.png" の画像があること
+    * その画像のaltが "ATND アテンド β PRODUCED BY RECRUIT" であること
+    * その画像リンクのURLが "/" であること
+    * その画像リンクが新しいタブで開かないこと
+    * その画像リンクをクリックした時
+    * パスが "/" になっていること
+    * "未読メッセージ" という文字列が含まれていないこと
+    * "ATND はイベント運営者・参加者のためのサービスです。" という文字列が含まれていること
+  Scenario:
+
+    When "ログイン or 無料登録" をクリックした時
+    * パスが "/login" になっていること
+    * "ログインしてください" という文字列が含まれていること
+
+  Scenario:
+    When "日本語" をクリックした時
+    * パスが "/" になっていること
+    * "ATND はイベント運営者・参加者のためのサービスです。" という文字列が含まれていること
+
+  Scenario:
+    When "English" をクリックした時
+    * パスが "/" になっていること
+    * "Plan your event with ATND." という文字列が含まれていること
+
+  Scenario:
+    When 外部リンク "RSS" について
+    * パスが "/?format=rss" になっていること
+
+# メイン画面確認シナリオ
+
+  Scenario:
+    When トップページにアクセスする
+    * ピックアップイベントが "0" 件あること
+    * "72時間以内に開催するイベント (0)" という文字列が含まれていること
+    * 72時間以内にイベントが "0" 件表示されていること
+
+# サイドバー確認シナリオ
+  Scenario:
+    When "新しいイベントを作る" をクリックした時
+    * パスが "/session/new" になっていること
+    * "ログインしてください" という文字列が含まれていること
+
+  Scenario:
+    When デモイベントが存在する
+    * トップページにアクセスする
+    * "デモイベントを見る" をクリックした時
+    * パスが "/events/1" になっていること
+    * "ATNDデモ（タイトル）自由に参加/キャンセルをしてみてください" という文字列が含まれていること
+
+  Scenario:
+    When "ATND API" をクリックした時
+    * URLが "http://api.atnd.org/" になっていること
+    * "API リファレンス" という文字列が含まれていること
+
+  Scenario:
+    When "1" 番目の "/assets/codeiq300x250_02.jpg" の画像があること
+    * その画像のaltが "CodeIQ(コードアイキュー)" であること
+    * その画像リンクのURLが "http://r.advg.jp/adptg_count/r?adptg_aid=6139&adptg_mid=91&adptg_lid=3" であること
+    * その画像リンクが新しいタブで開くこと
+    * その画像リンクをクリックした時
+    * 外部リンク切れになっていないこと
+
+  Scenario:
+    When "1" 番目の "/assets/makershub300x250.jpg" の画像があること
+    * その画像のaltが "MakersHub(Makersのための作品ショーケース)" であること
+    * その画像リンクのURLが "https://makershub.jp/?utm_source=display&utm_medium=atnd&utm_campaign=nontg" であること
+    * その画像リンクが新しいタブで開くこと
+    * その画像リンクをクリックした時
+    * 外部リンク切れになっていないこと
+
+  Scenario:
+    When "1" 番目の "/assets/sankaku.png" の画像があること
+    * その画像のaltが "仕事を辞めずに、成長企業の経営にサンカクできる" であること
+    * その画像リンクのURLが "https://sankak.jp/?utm_source=ATND&utm_medium=display&utm_content=f10&utm_campaign=ATND1409" であること
+    * その画像リンクが新しいタブで開くこと
+    * その画像リンクをクリックした時
+    * 外部リンク切れになっていないこと
+
+  Scenario:
+    When "1" 番目の "/assets/dokoiku.png" の画像があること
+    * その画像のaltが "ドコイク？キャリアは日本最大級の転職サイト、リクナビNEXTに登録されている250万人のレジュメデータをもとに作られています。" であること
+    * その画像リンクのURLが "https://hrtoolhub.com/dokoA/?utm_source=atnd&utm_medium=banner&utm_term=%E3%83%89%E3%82%B3%E3%82%A4%E3%82%AF&utm_content=001&utm_campaign=ATND" であること
+    * その画像リンクが新しいタブで開くこと
+    * その画像リンクをクリックした時
+    * 外部リンク切れになっていないこと
+
+# フッター確認
+  Scenario:
+    When "利用規約" をクリックした時
+    * パスが "/help/terms/" になっていること
+    * "「ATND」利用規約" という文字列が含まれていること
+
+  Scenario:
+    When "プライバシーポリシー" をクリックした時
+    * パスが "/help/privacy_policy" になっていること
+    * "個人情報保護方針" という文字列が含まれていること
+
+  Scenario:
+    When "お問い合わせ" をクリックした時
+    * パスが "/help/inquiry" になっていること
+    * "ATNDへのお問い合わせ" という文字列が含まれていること
+
+  Scenario:
+    When 外部リンク "ヘルプ (❏nanapi)" について
+    * URLが "http://nanapi.jp/web/atnd" になっていること
+    * 外部リンク切れになっていないこと
+
+  Scenario:
+    When 外部リンク "リクルートグループサイトへ" について
+    * URLが "http://www.recruit.co.jp/" になっていること
+    * 外部リンク切れになっていないこと
+
+  Scenario:
+    When "1" 番目の "/assets/copy_r.gif" の画像があること
+    * その画像のaltが "(C) Recruit Career Co.,Ltd." であること
+    * その画像リンクのURLが "http://www.recruitcareer.co.jp/" であること
+    * その画像リンクが新しいタブで開くこと
+    * その画像リンクをクリックした時
+    * 外部リンク切れになっていないこと?
+

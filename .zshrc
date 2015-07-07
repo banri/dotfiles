@@ -12,6 +12,7 @@ export PATH=$HOME/.rbenv/bin:$PATH
 eval "$(rbenv init - zsh)"
 export CC=/usr/bin/gcc
 export PATH=/Applications/Vagrant/bin:$PATH
+export PATH=/Users/Tokoroten/.nodebrew/current//bin:$PATH
 
 ########################################
 # alias
